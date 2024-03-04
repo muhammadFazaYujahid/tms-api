@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key</title>
+</head>
+
+<body>
+    <script>
+        const projectKey = (name_project) => {
+            const name = name_project.split(" ");
+            let result = "";
+            if (name.length > 1) {
+                result = name.map(word => word[0]).join("");
+            } else if (name_project.match(/[A-Z]/g)) {
+                result = name_project.match(/[A-Z]/g).join("");
+            } else if (name.length === 1) {
+                result = name.map(word => word[1]).join("") && name[0].slice(0, 3);
+            }
+            return result;
+        }
+        console.log("Project : ", projectKey("Project Manajemen Proyek"));
+        console.log("Project : ", projectKey("ProjectManaJemenProyek"));
+        console.log("Project : ", projectKey("project"));
+
+        const userKey = (username) => {
+            const name = username.split(" ");
+            let result = "";
+            if (name.length === 1) {
+                if (/[A-Z]/.test(username)) {
+                    result = username.length === 1 ? username[0].slice(0, 3) : (/[A-Z]/.test(username) ? username[0] + username.match(/[A-Z]/g).join('') : "");
+                } else {
+                    result = `3 Huruf Pertama : ${name.map(word => word[1]).join("") && name[0].slice(0, 3)}`;
+                }
+                return result;
+            }
+        }
+        console.log("UserKey : ", userKey("ILHAM"));
+        // console.log("UserKey : ", userKey("project"));
+
+        const kalimat = "testSprint";
+        const hasil = kalimat.length === 1 ? kalimat[0].slice(0, 3) : (/[A-Z]/.test(kalimat) ? kalimat[0] + kalimat.match(/[A-Z]/g).join('') : "");
+        console.log(hasil);
+
+        console.log("=================================================");
+        function tampilkanKarakter(input) {
+            input = input.replace(/[^A-Za-z]/g, "");
+            if (input === input.toLowerCase()) {
+                return input.slice(0, 3);
+            } else if (/[A-Z]/.test(input)) {
+                let uppercase = "";
+                for (let i = 0; i < input.length; i++) {
+                    if (input[i] === input[i].toUpperCase()) {
+                        uppercase += input[i];
+                    }
+                }
+                if (uppercase.length < 3) {
+                    return input.slice(2, 1) + uppercase;
+                } else {
+                    return uppercase.slice(0, 3);
+                }
+            } else {
+                return input.slice(0, 3);
+            }
+        }
+
+        // Contoh penggunaan
+        console.log(tampilkanKarakter("Ihham.via.Invite@gmail.com")); // Output: "abc"
+        console.log(tampilkanKarakter("IlhamRamadhan")); // Output: "Abc"
+        console.log(tampilkanKarakter("ILHAMRAMADAHAN")); // Output: "ABC"
+
+        console.log("\n=================================================\n");
+
+        const ambilHurufPertama = (kalimat) => {
+            let hasil = '';
+            const pemisah = /[.,_\-\s]/; // karakter pemisah yang diizinkan
+            // pecah kalimat menjadi array kata
+            const kata = kalimat.split(/[.,_\-\s]/);
+            // ambil huruf pertama setiap kata jika ada pemisah
+            if (kata.length > 1) {
+                kata.forEach((k) => {
+                    if (k !== '') {
+                        hasil += k[0].toUpperCase();
+                    }
+                });
+            }
+            // ambil 3 huruf pertama jika tidak ada pemisah
+            else {
+                hasil = kata[0].slice(0, 3).toUpperCase();
+            }
+            return hasil;
+        }
+        // contoh penggunaan
+        console.log("Menggunakan ( , ) : ", ambilHurufPertama('hello,world')); // output: HW
+        console.log("Menggunakan ( spasi ) : ", ambilHurufPertama('javascript is fun')); // output: JIF
+        console.log("Menggunakan ( _ ) : ", ambilHurufPertama('react_native_is_awesome')); // output: RNIA
+        console.log("Menggunakan ( - ) : ", ambilHurufPertama('ilham-ramadhan')); // output: OPE
+        console.log("Menggunakan ( satu huruf ) : ", ambilHurufPertama('openai')); // output: OPE
+
+    </script>
+</body>
+
+</html>

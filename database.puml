@@ -1,0 +1,139 @@
+@startuml
+
+entity User {
+    * id INTEGER(11) <<PK>>
+    --
+    * user_key VARCHAR(100)
+    * username VARCHAR(100)
+    * email VARCHAR(100)
+    * password VARCHAR(100)
+    * role VARCHAR(100)
+    * verified BOOLEAN
+    * email_token VARCHAR(100)
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * org_key(100) <<FK>>
+}
+
+entity Organization{
+    * id INTEGER(11) <<PK>>
+    --
+    * org_key VARCHAR(10)
+    * organization_name VARCHAR(100)
+    * createdAt timestamptz
+    * updatedAt timestamptz
+}
+entity Workspace{
+    * id INTEGER(11) <<PK>>
+    --
+    * work_key VARCHAR(10)
+    * workspace_name VARCHAR(100)
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * org_key VARCHAR(10) <<FK>>
+}
+entity Team{
+    * id INTEGER(11) <<PK>>
+    --
+    * team_key VARCHAR(10)
+    * team_name VARCHAR(100)
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * work_key VARCHAR(10) <<FK>>
+}
+entity TeamMember{
+    * id INTEGER(11) <<PK>>
+    --
+    * member_key VARCHAR(10)
+    * role VARCHAR(100)
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * team_key VARCHAR(10) <<FK>>
+    * user_key VARCHAR(10) <<FK>>
+}
+entity TeamHasProject{
+    * id INTEGER(11) <<PK>>
+    --
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * team_key VARCHAR(10) <<FK>>
+    * project_key VARCHAR(10) <<FK>>
+}
+entity Project{
+    * id INTEGER(11) <<PK>>
+    --
+    * project_key VARCHAR(10)
+    * project_name VARCHAR(100)
+    * createdAt timestamptz
+    * updatedAt timestamptz
+}
+entity Task{
+    * id INTEGER(11) <<PK>>
+    --
+    * task_key VARCHAR(10)
+    * task_name VARCHAR(100)
+    * task_description VARCHAR(100)
+    * status VARCHAR(50)
+    * parent_key VARCHAR(50)
+    * flag BOOLEAN
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * assignee VARCHAR(100) <<FK>>
+    * reporter VARCHAR(100) <<FK>>
+}
+entity TaskCommentHistory{
+    * id INTEGER(11) <<PK>>
+    --
+    * action VARCHAR(100)
+    * type enum("comment","history")
+    * status VARCHAR(50)
+    * parent_key VARCHAR(50)
+    * flag BOOLEAN
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * task_key VARCHAR(100) <<FK>>
+    * user_key VARCHAR(100) <<FK>>
+}
+entity TaskAttachment{
+    * id INTEGER(11) <<PK>>
+    --
+    * attach_name VARCHAR(100)
+    * attach_file VARCHAR(100)
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * upload_by VARCHAR(100) <<FK>>
+    * task_key VARCHAR(100) <<FK>>
+}
+entity VotedTask{
+    * id INTEGER(11) <<PK>>
+    --
+    * createdAt timestamptz
+    * updatedAt timestamptz
+    --
+    * user_key VARCHAR(100) <<FK>>
+    * task_key VARCHAR(100) <<FK>>
+}
+
+Organization ||-o{ User
+Organization ||-o{ Workspace
+Workspace ||--o{ Team
+Team ||--o{ TeamMember
+TeamMember ||-o{ User
+Team ||-||TeamHasProject
+TeamHasProject ||--|| Project
+Task ||--o{ User
+Task ||--o{ TaskCommentHistory
+User ||--o{ TaskCommentHistory
+Task ||--|| TaskAttachment
+User ||--|| TaskAttachment
+Task ||--|| VotedTask
+User ||-o{ VotedTask
+@enduml

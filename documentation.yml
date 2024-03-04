@@ -1,0 +1,1467 @@
+openapi: 3.0.0
+info:
+  title: Manajement Proyek
+  contact: {}
+  version: '1.0'
+servers:
+  - url: http://example.com
+    variables: {}
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register
+      operationId: Register
+      parameters: []
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              required:
+                - username
+                - email
+                - password
+                - avatar
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: Ilham
+                email:
+                  type: string
+                  example: ilham@gmail.com
+                password:
+                  type: integer
+                  format: int32
+                  example: 1234
+                avatar:
+                  type: string
+                  format: binary
+        required: false
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '72'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"48-4pcGN4SdWN4TEbS13bzPLKFZeck"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:29:42 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESS'
+                  - example:
+                      success: true
+                      message: Successed register
+                      data: ilham@gmail.com
+              example:
+                success: true
+                message: Successed register
+                data: ilham@gmail.com
+        '409':
+          description: Conflict
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '46'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"2e-qifgxi/Yl4ZpBS5x3QyRFQRRd68"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Mon, 01 May 2023 12:47:27 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ERRORCONFILCT1'
+                  - example:
+                      success: false
+                      message: username already
+              example:
+                success: false
+                message: username already
+      deprecated: false
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      operationId: Login
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/LoginRequest'
+                - example:
+                    email: ilham@gmail.com
+                    password: '1234'
+            example:
+              email: ilham@gmail.com
+              password: '1234'
+        required: true
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Set-Cookie:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcl9rZXkiOiJVU0VSLTEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2ODM4Njk1MTYsImV4cCI6MTc3MTk5NzUxNn0.kQGZPs75ROuyp9C_EXNjXkTLhCzJdt0Xd38R_cMpyJA; Max-Age=88128; Path=/; Expires=Sat, 13 May 2023 06:00:44 GMT; HttpOnly
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '66'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"42-BPHAaLZ0BB6j0L+Gwf6VYzZ5ZTk"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:31:56 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESS1'
+                  - example:
+                      success: true
+                      message: Login successfully
+                      username: Ilham
+              example:
+                success: true
+                message: Login successfully
+                username: Ilham
+        '400':
+          description: Bad Request
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '56'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"38-bUaTvaheo3UX5amVjiZHO7nEgl4"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Sun, 30 Apr 2023 08:53:44 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BADREQUESTERRORWRONGPASSWORD1'
+                  - example:
+                      success: false
+                      message: Wrong password or username
+              example:
+                success: false
+                message: Wrong password or username
+      deprecated: false
+      security: []
+  /auth/logout:
+    get:
+      tags:
+        - Authentication
+      summary: Log Out
+      operationId: LogOut
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Set-Cookie:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '45'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"2d-+chYX85T/hDRnVPCApkNRWOHcUo"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Sun, 30 Apr 2023 08:49:19 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESSLOGOUT'
+                  - example:
+                      success: true
+                      message: Successed logout
+              example:
+                success: true
+                message: Successed logout
+        '401':
+          description: Unauthorized
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '47'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"2f-DZUzaTgh2HRQlItmMVtX7AvBfOA"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:33:25 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/UNAUTHORIZEDNotlogged1'
+                  - example:
+                      success: false
+                      message: Not logged in yet
+              example:
+                success: false
+                message: Not logged in yet
+      deprecated: false
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Me
+      operationId: Me
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '105'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"69-ltvsCWSx7kVmTSKHQR064UeOHGw"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:34:33 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESSLOGIN'
+                  - example:
+                      success: true
+                      message: Profile
+                      data:
+                        username: Ilham
+                        email: ilham@gmail.com
+                        role: admin
+              example:
+                success: true
+                message: Profile
+                data:
+                  username: Ilham
+                  email: ilham@gmail.com
+                  role: admin
+        '401':
+          description: Unauthorized
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '22'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"16-gcuJU5q8hXOgf6e20xwF/jTYPwI"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:35:25 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/UNAUTHORIZEDNOTOKEN1'
+                  - example:
+                      message: No token
+              example:
+                message: No token
+      deprecated: false
+      security: []
+  /user/invite-user:
+    post:
+      tags:
+        - Users
+      summary: Invite user
+      operationId: Inviteuser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/InviteuserRequest'
+                - example:
+                    email: faza@gmail.com
+                    role: user
+            example:
+              email: faza@gmail.com
+              role: user
+        required: true
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '54'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"36-PbxM7A/XpyPn6tXWlr0wIqnIClI"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:37:17 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESSINVITEUSER'
+                  - example:
+                      message: Successed invite
+                      data: faza@gmail.com
+              example:
+                message: Successed invite
+                data: faza@gmail.com
+        '409':
+          description: Conflict
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '27'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"1b-oJCpQEXIFNKnt/aY269B4nMRMlA"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:37:53 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CONFLICTEMAILALREADY1'
+                  - example:
+                      message: email already
+              example:
+                message: email already
+      deprecated: false
+  /user/verify-invite:
+    post:
+      tags:
+        - Users
+      summary: Verify Invite
+      operationId: VerifyInvite
+      parameters:
+        - name: continue
+          in: query
+          description: ''
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 6a1e1b6c6ac9ab15a0e70ea6ee2bc4b46432e89c74a50730fe727b187370ab8a7746725d3011ab6520504723f8e36078943a0df144988af054a2033957f17587
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              required:
+                - username
+                - password
+                - avatar
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: Fazaa
+                password:
+                  type: integer
+                  format: int32
+                  example: 1234
+                avatar:
+                  type: string
+                  format: binary
+        required: false
+      responses:
+        '201':
+          description: Created
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '78'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"4e-d3W59nhwkiB3J0p4hDvw4L4L1FI"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:39:08 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESSVERFYINVITEANDCREATEACCOUNT'
+                  - example:
+                      success: true
+                      message: Successed created account
+                      data: faza@gmail.com
+              example:
+                success: true
+                message: Successed created account
+                data: faza@gmail.com
+        '400':
+          description: Bad Request
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '46'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"2e-F98Iq59jCgd6nUY58Qn0/VMB0WQ"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:40:44 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BADREQUESTALREADYVERIFIED1'
+                  - example:
+                      success: false
+                      message: Already verified
+              example:
+                success: false
+                message: Already verified
+        '409':
+          description: Conflict
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '46'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"2e-6In/zx8bpZKBjhCi1rZSFnNoSho"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:40:00 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CONFLICTUSERNAMEALREADY1'
+                  - example:
+                      success: false
+                      message: Username already
+              example:
+                success: false
+                message: Username already
+      deprecated: false
+  /user/password:
+    put:
+      tags:
+        - Users
+      summary: Changed Passwod
+      operationId: ChangedPasswod
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/ChangedPasswodRequest'
+                - example:
+                    old_password: '123'
+                    password: '1234'
+            example:
+              old_password: '123'
+              password: '1234'
+        required: true
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Set-Cookie:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '86'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"56-szbwp//o9G2gaJ38oXEAJzhYF7U"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Sun, 30 Apr 2023 08:56:14 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESS'
+                  - example:
+                      success: true
+                      message: Password changed successfully
+                      data: Please login again
+              example:
+                success: true
+                message: Password changed successfully
+                data: Please login again
+        '400':
+          description: Bad Request
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '34'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"22-T7/BAdSzWlm3N0NlYky5LlBlHVU"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Sun, 30 Apr 2023 08:57:00 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ERRORINVALIDPASSWORD1'
+                  - example:
+                      message: Invalid old password
+              example:
+                message: Invalid old password
+      deprecated: false
+  /user/email:
+    put:
+      tags:
+        - Users
+      summary: Changed Email
+      operationId: ChangedEmail
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /user/verify-email:
+    get:
+      tags:
+        - Users
+      summary: Verify Email
+      operationId: VerifyEmail
+      parameters:
+        - name: token
+          in: query
+          description: ''
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: string
+            example: 1226e43a180d7d3847df3a27086e1650804fd8d4cbbe3e13c3732c76c331b22ab3d42866c2507a3bd31eedfa8edb13997bfd770dd1abdbeecb268dfea2757cc3
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '62'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"3e-2lYaJd3+GeXInVhvg+l5b62NFEI"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:30:56 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SUCCESS'
+                  - example:
+                      success: true
+                      message: successed verified
+                      data: Ilham
+              example:
+                success: true
+                message: successed verified
+                data: Ilham
+        '400':
+          description: Bad Request
+          headers:
+            X-Powered-By:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Express
+            Access-Control-Allow-Origin:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '*'
+            Content-Length:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: '46'
+            ETag:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: W/"2e-F98Iq59jCgd6nUY58Qn0/VMB0WQ"
+            Date:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: Fri, 12 May 2023 05:31:15 GMT
+            Connection:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: keep-alive
+            Keep-Alive:
+              content:
+                text/plain:
+                  schema:
+                    type: string
+                  example: timeout=5
+          content:
+            application/json; charset=utf-8:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/BADREQUEST1'
+                  - example:
+                      success: false
+                      message: Already verified
+              example:
+                success: false
+                message: Already verified
+      deprecated: false
+components:
+  schemas:
+    ERRORCONFILCT1:
+      title: ERRORCONFILCT1
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      example:
+        success: false
+        message: username already
+    SUCCESS:
+      title: SUCCESS
+      required:
+        - success
+        - message
+        - data
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: string
+      example:
+        success: true
+        message: Successed register
+        data: ilham@gmail.com
+    LoginRequest:
+      title: LoginRequest
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: ilham@gmail.com
+        password: '1234'
+    BADREQUESTERRORWRONGPASSWORD1:
+      title: BADREQUESTERRORWRONGPASSWORD1
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      example:
+        success: false
+        message: Wrong password or username
+    SUCCESS1:
+      title: SUCCESS1
+      required:
+        - success
+        - message
+        - username
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        username:
+          type: string
+      example:
+        success: true
+        message: Login successfully
+        username: Ilham
+    SUCCESSLOGOUT:
+      title: SUCCESSLOGOUT
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      example:
+        success: true
+        message: Successed logout
+    UNAUTHORIZEDNotlogged1:
+      title: UNAUTHORIZEDNotlogged1
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      example:
+        success: false
+        message: Not logged in yet
+    SUCCESSLOGIN:
+      title: SUCCESSLOGIN
+      required:
+        - success
+        - message
+        - data
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Data'
+      example:
+        success: true
+        message: Profile
+        data:
+          username: Ilham
+          email: ilham@gmail.com
+          role: admin
+    Data:
+      title: Data
+      required:
+        - username
+        - email
+        - role
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+      example:
+        username: Ilham
+        email: ilham@gmail.com
+        role: admin
+    UNAUTHORIZEDNOTOKEN1:
+      title: UNAUTHORIZEDNOTOKEN1
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: No token
+    InviteuserRequest:
+      title: InviteuserRequest
+      required:
+        - email
+        - role
+      type: object
+      properties:
+        email:
+          type: string
+        role:
+          type: string
+      example:
+        email: faza@gmail.com
+        role: user
+    SUCCESSINVITEUSER:
+      title: SUCCESSINVITEUSER
+      required:
+        - message
+        - data
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: string
+      example:
+        message: Successed invite
+        data: faza@gmail.com
+    CONFLICTEMAILALREADY1:
+      title: CONFLICTEMAILALREADY1
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: email already
+    SUCCESSVERFYINVITEANDCREATEACCOUNT:
+      title: SUCCESSVERFYINVITEANDCREATEACCOUNT
+      required:
+        - success
+        - message
+        - data
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: string
+      example:
+        success: true
+        message: Successed created account
+        data: faza@gmail.com
+    CONFLICTUSERNAMEALREADY1:
+      title: CONFLICTUSERNAMEALREADY1
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      example:
+        success: false
+        message: Username already
+    BADREQUESTALREADYVERIFIED1:
+      title: BADREQUESTALREADYVERIFIED1
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      example:
+        success: false
+        message: Already verified
+    ChangedPasswodRequest:
+      title: ChangedPasswodRequest
+      required:
+        - old_password
+        - password
+      type: object
+      properties:
+        old_password:
+          type: string
+        password:
+          type: string
+      example:
+        old_password: '123'
+        password: '1234'
+    ERRORINVALIDPASSWORD1:
+      title: ERRORINVALIDPASSWORD1
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: Invalid old password
+    BADREQUEST1:
+      title: BADREQUEST1
+      required:
+        - success
+        - message
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      example:
+        success: false
+        message: Already verified
+tags:
+  - name: Authentication
+  - name: Users
