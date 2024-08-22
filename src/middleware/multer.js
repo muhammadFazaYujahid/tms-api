@@ -1,7 +1,7 @@
 import multer from "multer";
 import fs from "fs";
 
-const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".docx", ".doc", ".csv", ".pptx", ".ppt", ".pdf", ".csv", ".xls", ".xlsx"];
+const allowedExtensions = [".jpg", ".jpeg", ".png", ".PNG", ".gif", ".docx", ".doc", ".csv", ".pptx", ".ppt", ".pdf", ".csv", ".xls", ".xlsx"];
 
 const upload = (fieldName) => {
     return multer({
@@ -57,7 +57,7 @@ const multipleUpload = (fieldName, maxCount) => {
             },
         }),
         limits: {
-            fileSize: 3 * 1000 * 1000,
+            fileSize: 10 * 1000 * 1000,
         },
         fileFilter: (req, file, cb) => {
             const extension = file.originalname.split(".").pop();

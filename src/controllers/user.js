@@ -98,7 +98,7 @@ export const inviteUser = async (req, res, next) => {
                         <h1 style="margin-bottom:0;font-size:24px;font-weight:500;letter-spacing:-0.01em;color:#172b4d;line-height:28px;margin-top:40px">Your team is waiting for you to join them</h1>
                         <h3 style="font-size:16px;font-weight:500;letter-spacing:-0.006em;color:#172b4d;line-height:20px;margin: top 5px;padding:0">${invitationUser.username} has invited you to collaborate</h3>
     
-                        <a href="http://localhost:3000/auth/setup-account?invited=true&token=${newUser.email_token}"
+                        <a href="${process.env.FRONTEND_LINK}/auth/setup-account?invited=true&token=${newUser.email_token}"
                             style="box-sizing:border-box;border-radius:3px;border-width:0;border:none;display:inline-flex;font-style:normal;font-size:inherit;line-height:24px;margin:0;outline:none;padding:4px 12px;text-align:center;vertical-align:middle;white-space:nowrap;text-decoration:none;background:#0052cc;color:#ffffff;">
                             Join the team</a>
     

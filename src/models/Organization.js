@@ -18,6 +18,11 @@ const Organization = db.define(
                 notEmpty: true,
             },
         },
+        org_logo: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null
+        },
     },
     {
         freezeTableName: true,

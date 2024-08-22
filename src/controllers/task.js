@@ -88,6 +88,108 @@ export const createTask = async (req, res, next) => {
         });
     }
 };
+const getUserData = async (email) => {
+    try {
+        
+    const response = await User.findAll({
+        where: {email: email},
+        attributes: ['user_key', 'email', 'username']
+    });
+    return response;
+
+    } catch (error) {
+        
+       res.status(500).json({
+            success: false,
+            message: "Some User Not Found",
+            error: error.message,
+        });
+    }
+
+}
+export const importTask = async (req, res, next) => {
+    const {
+        tasks
+    } = req.body;
+    try {
+        const assignerList = [...new Set(tasks.map(item => item.assigner_mail))];
+        const reporterList = [...new Set(tasks.map(item => item.reporter_mail))];
+        const statusList = [...new Set(tasks.map(item => item.status))].map(status => status.toLowerCase().replace(/\s+/g, ''));
+        let isError = false;
+        let errorMessage = "";
+        const assigners = await getUserData(assignerList);
+        const reporters = await getUserData(reporterList);
+        const statuses = await TaskStatus.findAll({attributes: ['status_key', 'name']});
+
+        const missingAssigner = assignerList.filter(data => !assigners.map(user => user.email).includes(data));
+        const missingReporter = reporterList.filter(data => !reporters.map(user => user.email).includes(data));
+        const missingStatus = statusList.filter(data => !statuses.map(status => status.name.toLowerCase().replace(/\s+/g, '')).includes(data));
+
+        if (missingAssigner.length > 0 || missingReporter.length > 0) {
+            isError = true;
+            errorMessage = "Some User doesn't exist"
+        } else if (missingStatus.length > 0) {
+            isError = true;
+            errorMessage = "Some Status doesn't exist"
+        }
+
+        if (isError) {
+            return res.status(500).json({
+                success: false,
+                message: errorMessage,
+            });
+        }
+        
+        const formattedTask = tasks.map((task) => {
+            
+
+            return {
+                task_key: "TS-" + crypto.randomBytes(2).toString("hex"),
+                ...task,
+                status_key: statuses.find(status => status.name.toLowerCase().replace(/\s+/g, '') === task.status.toLowerCase().replace(/\s+/g, '')).status_key ,
+                assigner: assigners.find(user => user.email === task.assigner_mail).user_key,
+                reporter: reporters.find(user => user.email === task.reporter_mail).user_key,
+            }
+        })
+        
+        const formattedAssigner = formattedTask.map(task => {
+            return {
+                task_key: task.task_key,
+                type: 'assigner',
+                handler: task.assigner
+            }
+        })
+        
+        const formattedReporter = formattedTask.map(task => {
+            return {
+                task_key: task.task_key,
+                type: 'reporter',
+                handler: task.reporter
+            }
+        })
+        const taskHandlers = [formattedAssigner, formattedReporter].flat();
+        const filteredTaskField = formattedTask.map(({ assigner, reporter, status, assigner_mail, reporter_mail, ...rest }) => rest);
+
+        const createTask = Task.bulkCreate(filteredTaskField);
+        
+        if (createTask) {
+            TaskHandler.bulkCreate(taskHandlers)
+        }
+        
+        res.status(201).json({
+            success: true,
+            message: "Import Tasks Success"
+        });
+
+    } catch (error) {
+        console.error('ada error', error.message)
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+    }
+};
 
 export const changeSprint = async (req, res, next) => {
     const {
@@ -198,16 +300,18 @@ export const changeTaskStatus = async (req, res, next) => {
     try {
         const created = new Date();
         const getTask = await Task.findOne({ where: { task_key: task_key } });
+        const old_status_key = (req.body.is_confirm === undefined) ? getTask.status_key : getTask.previous_status;
         if (getTask) {
-            const old_status = await TaskStatus.findOne({ where: { status_key: getTask.status_key } });
+            const old_status = await TaskStatus.findOne({ where: { status_key: old_status_key } });
             const new_status = await TaskStatus.findOne({ where: { status_key: status_key } });
             const getHandler = await TaskHandler.findAll({ where: { task_key: task_key, type: 'reporter' } });
 
+            const action = (req.body.is_confirm === undefined) ?  `Has Change ${task_name} Task Status` : `Has Confirm ${task_name} Status Change`;
 
             const getUser = await User.findOne({ where: { id: req.userId } });
             const createHistory = await TaskCommentHistory.create({
                 user_key: getUser.user_key,
-                action: `Has Change ${task_name} Task Status`,
+                action: action,
                 task_key: task_key,
                 old_value: old_status.name,
                 new_value: new_status.name,
@@ -215,6 +319,7 @@ export const changeTaskStatus = async (req, res, next) => {
                 readed: false,
                 url: url,
             })
+            const verify_status = (req.body.verify_status === undefined) ? ((new_status.need_verify === true) ? 'requested' : null) : req.body.verify_status;
             // let handler = [];
 
             await Promise.all(
@@ -229,7 +334,7 @@ export const changeTaskStatus = async (req, res, next) => {
                 })
             )
 
-            const tasks = await Task.update({ status_key: status_key }, { where: { task_key: task_key } });
+            const tasks = await Task.update({ status_key: status_key, verify_status: verify_status, previous_status: getTask.status_key  }, { where: { task_key: task_key } });
 
             res.status(200).json({
                 success: true,
@@ -577,7 +682,7 @@ export const getTaskIssue = async (req, res, next) => {
                 })
 
                 await Promise.all(
-                    task.task_handlers.map(async (handler) => {
+                    task?.task_handlers?.map(async (handler) => {
                         const user = await User.findOne({ where: { user_key: handler.handler }, attributes: ['username'] })
                         handler.setDataValue('handler_name', user.username)
                     })
@@ -749,7 +854,7 @@ export const getTaskStatus = async (req, res, next) => {
     try {
         const tasks = await TaskStatus.findAll({
             where: { project_key: req.query.project_key },
-            attributes: ['status_key', 'name', 'description', 'project_key']
+            attributes: ['status_key', 'name', 'description', 'color', 'project_key']
         });
         res.status(200).json({
             success: true,
@@ -1118,6 +1223,7 @@ export const deleteTask = async (req, res, next) => {
         const removeParent = await Task.update({ parent_key: '' }, { where: { parent_key: taskKey } });
         if (removeParent) {
             const removeTask = await Task.destroy({ where: { task_key: taskKey } });
+            const removeIssue = await TaskIssue.destroy({ where: { issued_task: taskKey } })
         }
         // const task = await Task.update({ parent_key: parent_key }, { where: { task_key: task_key } })
         res.status(200).json({

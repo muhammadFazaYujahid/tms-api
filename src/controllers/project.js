@@ -1,8 +1,8 @@
 import db from "../configs/connection.js";
-import { Project, Sprint, TaskStatus, Team, TeamHasProject, User, Workspace } from "../models/index.js";
+import { Project, Sprint, Task, TaskStatus, Team, TeamHasProject, User, Workspace } from "../models/index.js";
 import { key } from "../utils/generateKey.js";
 import { MemberHasProject, WorkspaceMember } from "../models/Workspace.js";
-import { HasMany, Sequelize, Op } from "sequelize";
+import { HasMany, Sequelize, Op, fn, col } from "sequelize";
 import path from "path";
 
 export const createProject = async (req, res, next) => {
@@ -55,6 +55,7 @@ export const createProject = async (req, res, next) => {
                     name: 'To Do',
                     description: 'To Do Tasks',
                     project_key: updateProject.project_key,
+                    color: "#f5f5f5",
                     sort_index: 1
                 },
                 {
@@ -62,13 +63,16 @@ export const createProject = async (req, res, next) => {
                     name: 'On Progress',
                     description: 'In Progress Tasks',
                     project_key: updateProject.project_key,
+                    color: "#FFF8E1",
                     sort_index: 2
                 },
                 {
                     status_key: `CP-${updateProject.project_key}`,
                     name: 'Completed',
                     description: 'Completed Tasks',
+                    need_verify: true,
                     project_key: updateProject.project_key,
+                    color: "#B2DFDB",
                     sort_index: 3
                 },
             ]
@@ -79,6 +83,7 @@ export const createProject = async (req, res, next) => {
                 selectedMember.map(async (member) => {
                     await MemberHasProject.create({
                         member_key: member.member_key,
+                        user_key: member.user_key,
                         project_key: updateProject.project_key
                     })
                 })
@@ -148,10 +153,27 @@ export const projectDetail = async (req, res, next) => {
     const { project_key } = req.query;
     try {
         const project = await Project.findOne({ where: { project_key: project_key } });
+        const taskStatus = await TaskStatus.findAll({where: { project_key: project_key }, attributes: ['status_key','name', 'color']})
+        const statusKey = taskStatus.map(status => status.status_key);
+        const tasks = await Task.findAll({
+            attributes: [
+                [fn('COUNT', fn('DISTINCT', col('task_key'))), 'task_count'],
+                'status_key'
+            ],
+            where: {status_key: statusKey},
+            group: ['status_key'],
+        })
+
+        const statusData = tasks.map((task) => {
+                task.setDataValue('status_name', taskStatus.find(status => status.status_key === task.status_key).name);
+                task.setDataValue('status_color', taskStatus.find(status => status.status_key === task.status_key).color);
+            return task;
+        })
+        
         res.status(200).json({
             success: true,
             message: "Successed",
-            data: project,
+            data: {project, statusData},
         });
     } catch (error) {
         res.status(500).json({
@@ -250,7 +272,7 @@ export const getProjectHandler = async (req, res, next) => {
             }]
         })
         const noTeamMember = await WorkspaceMember.findAll({
-            attributes: ['member_key', 'role'],
+            attributes: ['member_key', 'role', 'user_key'],
             where: {
                 work_key: getWorkKey.work_key,
                 team_key: null,
@@ -260,7 +282,7 @@ export const getProjectHandler = async (req, res, next) => {
             },
             include: [{
                 model: User,
-                attributes: ['user_key', 'username']
+                attributes: ['username', 'photo']
             }]
         })
         const noTeam = { team_key: 'no_key', team_name: 'No Team', workspace_members: noTeamMember };
@@ -341,7 +363,7 @@ export const searchMemberProject = async (req, res) => {
             attributes: ['work_key', 'workspace_name'],
             include: [{
                 model: WorkspaceMember,
-                attributes: ['member_key']
+                attributes: ['member_key', 'user_key']
             }]
         });
 
@@ -410,6 +432,7 @@ export const inviteMember = async (req, res, next) => {
             selectedMember.map(async (member) => {
                 await MemberHasProject.create({
                     member_key: member.member_key,
+                    user_key: member.user_key,
                     project_key: project_key
                 })
             })

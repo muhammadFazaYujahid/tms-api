@@ -1,10 +1,16 @@
 import express from "express";
 import {
+    changeUserRole,
     createClient,
     deleteClient,
+    deleteUserFromOrg,
+    editOrgDetail,
     findOrganization,
     getClient,
+    getOrgByKey,
     getOrgByUserId,
+    getOrgLogo,
+    importUser,
     listOrganization,
     nonTeamMember,
     searchMember,
@@ -25,6 +31,7 @@ import {
     getWorkspaceActivity,
     workspaceMemberReport,
     getMemberRole,
+    bulkInviteWorkspace,
 } from "../controllers/workspace.js";
 import {
     addMemberTeam,
@@ -67,6 +74,7 @@ import {
     getTaskStatus,
     getTaskVote,
     getWatcher,
+    importTask,
     listTask,
     removeChild,
     removeWatch,
@@ -89,6 +97,13 @@ router.get("/get-org-list", checkAuth, getOrgByUserId);
 router.get("/workspace-member-role", checkAuth, getMemberRole);
 //router for frontend middleware end
 
+router.get("/myorg", checkAuth, getOrgByKey);
+router.post("/edit-detail", editOrgDetail);
+router.get("/org-logo", checkAuth, getOrgLogo);
+router.post("/change-user-role", [checkAuth, createActivity], changeUserRole);
+router.post("/delete-user", [checkAuth, createActivity], deleteUserFromOrg);
+router.post("/import-user", checkAuth, importUser);
+
 router.get("/members", checkAuth, listOrganization);
 router.get("/members/detail", checkAuth, getUserDetail);
 router.get("/members/task", checkAuth, getMemberTask);
@@ -106,6 +121,7 @@ router.delete("/client/:client_key", [checkAuth, createActivity], deleteClient);
 router.post("/get-client", checkAuth, getClient);
 router.post("/workspace", [checkAuth, createActivity], createWorkspace);
 router.post("/workspace/invite-to-workspace", [checkAuth, createActivity], inviteToWorkspace);
+router.post("/workspace/bulk-invite", [checkAuth, createActivity], bulkInviteWorkspace);
 router.get("/workspace/list", checkAuth, listWorkspace);
 router.get("/workspace/:work_key/members", checkAuth, findMemberWorkspace);
 router.get("/workspace/:work_key/workspace", checkAuth, findWorkspace);
@@ -176,6 +192,8 @@ router.post("/project/task/flag", [checkAuth, createTaskHistory, createNotificat
 router.post("/project/task/unflag", [checkAuth, createTaskHistory, createNotification], unflagTask);
 router.post("/project/task/edit-parent", [checkAuth, createTaskHistory, createNotification], editParent);
 router.post("/project/task/delete-comment", [checkAuth, createTaskHistory, createNotification], deleteComment);
+router.post("/project/task/import", checkAuth, importTask);
+
 router.post("/project/task/status", checkAuth, createStatus);
 router.post("/project/task/status/change-status", checkAuth, changeTaskStatusById);
 router.post("/project/task/status/change-name", [checkAuth, createActivity], changeStatusName);
@@ -196,6 +214,7 @@ router.get("/project/task/vote", checkAuth, getTaskVote);
 router.get("/project/task/:task_key/detail", checkAuth, detailTask);
 router.delete("/project/task/attachment/:attachId", [checkAuth, createTaskHistory], deletedAttachment);
 router.delete("/project/task/:taskKey", checkAuth, deleteTask);
+
 
 //added by faza
 

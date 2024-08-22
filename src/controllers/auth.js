@@ -55,7 +55,7 @@ export const register = async (req, res, next) => {
                         You're nearly there!</h1>
                     <p style="color:#091e42;line-height:20px;margin-top:12px">Hi ${user.username},</p>
                     <p style="color:#091e42;line-height:20px;margin-top:12px">Please verify your mail to continue...</p>
-                    <a href="http://localhost:3000/auth/setup-account?invited=true&token=${user.email_token}"
+                    <a href="${process.env.FRONTEND_LINK}/auth/setup-account?invited=true&token=${user.email_token}"
                         style="box-sizing:border-box;border-radius:3px;border-width:0;border:none;display:inline-flex;font-style:normal;font-size:inherit;line-height:24px;margin:0;outline:none;padding:4px 12px;text-align:center;vertical-align:middle;white-space:nowrap;text-decoration:none;background:#0052cc;color:#ffffff;">
                         Verify your email</a>
                 </div>
@@ -123,6 +123,7 @@ export const login = async (req, res, next) => {
             id: user.id,
             user_key: user.user_key,
             role: user.role,
+            user: user
         };
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
             // expiresIn: 24 * 17 * 60 * 60 * 60,
@@ -138,7 +139,10 @@ export const login = async (req, res, next) => {
                 message: "Login successfully",
                 email: user.email,
                 user_key: user.user_key,
+                username: user.username,
+                user_photo: user.photo,
                 org: userOrg.org_key,
+                user_role: userOrg.role,
                 token: token,
             });
     } catch (error) {
@@ -321,7 +325,7 @@ export const requestResetPassword = async (req, res, next) => {
                         Reset Password</h1>
                     <p style="color:#091e42;line-height:20px;margin-top:12px">Hi ${checkEmail.username},</p>
                     <p style="color:#091e42;line-height:20px;margin-top:12px">Click this button bellow to reset your password</p>
-                    <a href="http://localhost:3000/auth/reset-password?token=${passwordToken}"
+                    <a href="${process.env.FRONTEND_LINK}/auth/reset-password?token=${passwordToken}"
                     style="box-sizing:border-box;border-radius:3px;border-width:0;border:none;display:inline-flex;font-style:normal;font-size:inherit;line-height:24px;margin:0;outline:none;padding:4px 12px;text-align:center;vertical-align:middle;white-space:nowrap;text-decoration:none;background:#0052cc;color:#ffffff;">
                     Verify your email</a>
                     <p style="color:#091e42;line-height:20px;margin-top:12px">if you never ask to reset password, ignore this message. we also recommend changing your password in the profile settings</p>

@@ -54,6 +54,7 @@ Sprint.hasMany(Task, { foreignKey: "sprint_key", sourceKey: "sprint_key" });
 Task.belongsTo(Sprint, { foreignKey: "sprint_key", sourceKey: "sprint_key" });
 
 Task.belongsTo(TaskStatus, { foreignKey: "status_key", targetKey: "status_key" });
+Task.hasMany(Task, { foreignKey: "status_key", targetKey: "status_key" });
 
 Task.belongsTo(User, { as: "reporter_task", foreignKey: "reporter", targetKey: "user_key" });
 

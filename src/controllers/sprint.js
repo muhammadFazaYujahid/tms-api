@@ -76,6 +76,7 @@ export const createSprint = async (req, res, next) => {
     //     project_key,
     // } = req.body;
     const { project_key } = req.body;
+    console.log('be side', req.body);
     const project = await Project.findOne({
         where: {
             project_key: Sequelize.where(

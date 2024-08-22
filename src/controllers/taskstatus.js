@@ -86,7 +86,7 @@ export const getProceedTask = async (req, res, next) => {
 
 
 export const createStatus = async (req, res, next) => {
-    const { project_key, status_name } = req.body
+    const { project_key, status_name, color, need_verify } = req.body
     try {
         const getStatusLength = await TaskStatus.findAll({ where: { project_key: project_key } });
         const sort_index = getStatusLength.length + 1;
@@ -96,6 +96,8 @@ export const createStatus = async (req, res, next) => {
             name: status_name,
             project_key: project_key,
             sort_index: sort_index,
+            color: color,
+            need_verify: need_verify
         });
         res.status(200).json({
             success: true,
@@ -134,6 +136,7 @@ export const changeTaskStatusById = async (req, res, next) => {
                 url: url,
             })
             // let handler = [];
+            const verify_status = (new_status.need_verify === true) ? 'requested' : null;
 
             await Promise.all(
                 getHandler.map(async (data) => {
@@ -147,7 +150,7 @@ export const changeTaskStatusById = async (req, res, next) => {
                 })
             )
 
-            const tasks = await Task.update({ status_key: new_status.status_key }, { where: { task_key: getTask.task_key } });
+            const tasks = await Task.update({ status_key: new_status.status_key, verify_status: verify_status, previous_status: getTask.status_key }, { where: { task_key: getTask.task_key } });
 
         }
         res.status(200).json({
@@ -167,10 +170,12 @@ export const changeTaskStatusById = async (req, res, next) => {
 };
 
 export const changeStatusName = async (req, res, next) => {
-    const { status_key, status_name } = req.body
+    const { status_key, status_name, color, need_verify } = req.body
     try {
         const status = await TaskStatus.update({
             name: status_name,
+            color: color,
+            need_verify: need_verify
         }, { where: { status_key: status_key } });
         res.status(200).json({
             success: true,

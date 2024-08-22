@@ -47,11 +47,11 @@ app.use("/api/organization", OrgRouter);
 
 // uncomment at first running
 
-db.sync({ force: false })
-    .then(async () => {
-        console.log("Database Connection");
-    })
-    .catch((err) => console.log(err));
+// db.sync({ force: false })
+//     .then(async () => {
+//         console.log("Database Connection");
+//     })
+//     .catch((err) => console.log(err));
 
 const server = app.listen(PORT, () => {
     console.log(`Server run on port ${PORT}`);

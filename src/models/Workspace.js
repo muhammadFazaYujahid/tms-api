@@ -84,6 +84,13 @@ const MemberHasProject = db.define(
                 notEmpty: true,
             },
         },
+        user_key: {
+            type: DataTypes.STRING(10),
+            allowNull: false,
+            validate: {
+                notEmpty: true,
+            },
+        },
     },
     {
         freezeTableName: true,

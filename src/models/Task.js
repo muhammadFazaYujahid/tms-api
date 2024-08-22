@@ -64,6 +64,16 @@ const Task = db.define(
                 notEmpty: true,
             },
         },
+        previous_status: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: null
+        },
+        verify_status: {
+            type: DataTypes.ENUM,
+            values: ["requested", "verified"],
+            allowNull: true,
+        },
         parent_key: {
             type: DataTypes.STRING(10),
             defaultValue: "null",
@@ -75,7 +85,7 @@ const Task = db.define(
         flag: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            defaultValue: "false",
+            defaultValue: false,
             validate: {
                 notEmpty: true,
             },
@@ -152,12 +162,19 @@ const TaskStatus = db.define(
                 notEmpty: true,
             },
         },
+        need_verify: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         project_key: {
             type: DataTypes.STRING(10),
             allowNull: false,
             validate: {
                 notEmpty: true,
             },
+        },
+        color: {
+            type: DataTypes.STRING(30),
         },
         description: {
             type: DataTypes.STRING(255),

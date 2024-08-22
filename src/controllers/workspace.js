@@ -50,7 +50,7 @@ const createUser = async (userData) => {
                 <h1 style="margin-bottom:0;font-size:24px;font-weight:500;letter-spacing:-0.01em;color:#172b4d;line-height:28px;margin-top:40px">Your team is waiting for you to join them</h1>
                 <h3 style="font-size:16px;font-weight:500;letter-spacing:-0.006em;color:#172b4d;line-height:20px;margin: top 5px;padding:0">${invitationUser.username} has invited you to collaborate</h3>
 
-                <a href="http://localhost:3000/auth/setup-account?invited=true&token=${user.email_token}"
+                <a href="${process.env.FRONTEND_LINK}/auth/setup-account?invited=true&token=${user.email_token}"
                     style="box-sizing:border-box;border-radius:3px;border-width:0;border:none;display:inline-flex;font-style:normal;font-size:inherit;line-height:24px;margin:0;outline:none;padding:4px 12px;text-align:center;vertical-align:middle;white-space:nowrap;text-decoration:none;background:#0052cc;color:#ffffff;">
                     Join the team</a>
 
@@ -159,7 +159,7 @@ export const inviteToWorkspace = async (req, res, next) => {
                         <h1 style="margin-bottom:0;font-size:24px;font-weight:500;letter-spacing:-0.01em;color:#172b4d;line-height:28px;margin-top:40px">Your team is waiting for you to join them</h1>
                         <h3 style="font-size:16px;font-weight:500;letter-spacing:-0.006em;color:#172b4d;line-height:20px;margin: top 5px;padding:0">${invitationUser.username} has invited you to collaborate</h3>
     
-                        <a href="http://localhost:3000/auth/setup-account?invited=true&token=${newUser.email_token}"
+                        <a href="${process.env.FRONTEND_LINK}/auth/setup-account?invited=true&token=${newUser.email_token}"
                             style="box-sizing:border-box;border-radius:3px;border-width:0;border:none;display:inline-flex;font-style:normal;font-size:inherit;line-height:24px;margin:0;outline:none;padding:4px 12px;text-align:center;vertical-align:middle;white-space:nowrap;text-decoration:none;background:#0052cc;color:#ffffff;">
                             Join the team</a>
     
@@ -210,6 +210,33 @@ export const inviteToWorkspace = async (req, res, next) => {
         });
     }
 };
+
+export const bulkInviteWorkspace = async (req, res, next) => {
+    const { users, work_key } = req.body;
+    try {
+        const formattedUser = users.map(user => {
+            return {
+                member_key: 'MW-' + crypto.randomBytes(2).toString("hex"),
+                work_key,
+                user_key: user.user_key,
+                role: user.role,
+            }
+        })
+        console.log('invite', formattedUser);
+        WorkspaceMember.bulkCreate(formattedUser);
+        res.status(201).json({
+            success: true,
+            message: "Invite success",
+            // data: workspace,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+    }
+}
 
 export const addMemberToTeam = async (req, res, next) => {
     const { member_key, team_key } = req.body;
