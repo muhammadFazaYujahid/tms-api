@@ -1,4 +1,4 @@
-saat pertama kali running pada file /src/index.js, uncomment kode:
+saat pertama kali running pada file ./src/index.js, uncomment kode:
 
 // db.sync({ force: false }) <br />
 //     .then(async () => { <br />
